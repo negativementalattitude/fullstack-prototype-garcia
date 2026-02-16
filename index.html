@@ -2,7 +2,8 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale = 1.0"><title>Full-Stack App (Student Build)</title><link href="https://cdn.jsdeliver.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale = 1.0"><title>Full-Stack App (Student Build)</title>
+        <link href="https://cdn.jsdeliver.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
         <link rel="stylesheet" href="style.css">
     </head>
@@ -37,7 +38,96 @@
             </nav>
 
         <main class="container mt-4">
-            
+
+            <section id="home-page" class="page-active">
+                <div class="text-center mt-5">
+                    <h1>Welcome to Full-Stack App</h1>
+                    <p class = "lead">A static prototype before backend integration.</p>
+                    <div class="mt-4 role-logged-out">
+                        <a href="#/login" class="btn btn-primary btn-lg me-2">Login</a>
+                        <a href="#/register" class="btn btn-secondary btn-lg">Get Started</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="register-page" class="page">
+                <div class = "row justify-content-center">
+                    <div class="col-md-6">
+                        <div class ="card-show">
+                            <div class ="card-body">
+                                <h2 class="text-center mb-4">Regiser Account</h2>
+                                <form id ="register form"></form>
+                                    <div class="mb-3">
+                                        <label class="form-label">First Name</label>
+                                        <input type = "text" id="reg-firstname" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" id="reg-lastname" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="text" id="reg-email" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Password</label>
+                                        <input type="text" id="reg-password" class="form-control" minlength="6" required>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                                        <button type="button" class="btn btn-secondary" onclick="navigateTo('#home')">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="login-page" class="page">
+                <div class="row justify-content-center">
+                    <div class="col-md-4">
+                        <div class="card show">
+                            <div class="card-body">
+                                <h2 class="text center mb-4">Login</h2>
+                                <div id="login-error" class="alert alert-danger d-none"></div>
+                                <form id="login-form">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="text" id="login-email" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Password</label>
+                                        <input type="text" id="login-password" class="from-control" required>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">Login</button>
+                                        <button type="submit" class="btn btn-secondary" onclick="navigatTo('#home')">Cancel</button>
+                                    </div>
+                                </form>
+                                <div class="text-center mt-3">
+                                        <p>No account <a href="#/register">Register Here</a></p>
+                                </div>
+                            </div>        
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="profile-page" class="page">
+                <h2>My Profile</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 id="profile-name">User Name</h5>
+                        <p id="profile-email">user@example.com</p>
+                        <span id="profile-role" class="badge bg-secondary">User</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="employees-page" class="page role-admin">
+                <h2>Employees Management</h2>
+                <div class="alert alert-info">Admin Access Only</div>
+            </section>
         </main>
 
         <script src="https://cdn.jsdeliver.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
