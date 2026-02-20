@@ -1,28 +1,16 @@
-
+/* 1. Hide all pages by default */
 .page {
-    display: none; 
+    display: none;
 }
 
+/* 2. Only show the page that has the 'active' class added by JS */
 .page.active {
-    display: block; 
+    display: block;
+    animation: fadeIn 0.3s; /* Optional: Smooth fade-in effect */
 }
 
-
-body.not-authenticated .role-logged-in {
-    display: none !important;
-}
-
-
-body.authenticated .role-logged-out {
-    display: none !important;
-}
-
-
-.role-admin {
-    display: none !important;
-}
-
-
-body.is-admin .role-admin {
-    display: block !important;
+/* Optional: Simple fade animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
