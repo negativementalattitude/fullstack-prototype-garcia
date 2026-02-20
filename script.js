@@ -1,12 +1,10 @@
 (function initializeSystem() {
-    // 1. FORCE WIPE ALL DATA ON REFRESH
     localStorage.removeItem('users'); 
     localStorage.removeItem('employees'); 
     localStorage.removeItem('requests');
     localStorage.removeItem('departments');
     localStorage.removeItem('unverified_email');
     
-    // 2. RE-CREATE ADMIN ACCOUNT
     const users = [];
     const adminUser = {
         firstName: 'Admin',
@@ -19,7 +17,6 @@
     users.push(adminUser);
     localStorage.setItem('users', JSON.stringify(users));
 
-    // 3. RE-CREATE DEFAULT DEPARTMENTS
     const defaultDepts = [
         { name: 'Engineering', desc: 'Software and Hardware Team' },
         { name: 'HR', desc: 'Human Resources' },
@@ -415,16 +412,11 @@ window.deleteAccount = function(emailToDelete) {
     renderAccountsTable(); 
 };
 
-// ==========================================
-// PHASE 5: ADMIN EMPLOYEES MANAGEMENT
-// ==========================================
-
-// NEW FUNCTION: Populates the dropdown based on LocalStorage
 function populateDepartmentDropdown() {
     const selectEl = document.getElementById('emp-dept');
     if (!selectEl) return;
     
-    selectEl.innerHTML = ''; // Wipe old options completely
+    selectEl.innerHTML = ''; 
 
     let departments = JSON.parse(localStorage.getItem('departments')) || [];
 
@@ -446,7 +438,6 @@ function populateDepartmentDropdown() {
 }
 
 function renderEmployeesTable() {
-    // FORCE DROPDOWN REFRESH EVERY TIME PAGE LOADS
     populateDepartmentDropdown(); 
 
     const tbody = document.getElementById('employees-table-body');
@@ -563,10 +554,6 @@ window.deleteEmployee = function(idToDelete) {
     localStorage.setItem('employees', JSON.stringify(employees));
     renderEmployeesTable();
 };
-
-// ==========================================
-// PHASE 6: ADMIN DEPARTMENTS MANAGEMENT 
-// ==========================================
 
 function renderDepartmentsTable() {
     const tbody = document.getElementById('departments-table-body');
@@ -763,20 +750,16 @@ window.editRequest = function(id) {
 window.addItemRow = function() {
     const container = document.getElementById('req-items-container');
     
-    // Change the button of the previous last row to "x"
     const rows = container.getElementsByClassName('item-row');
     if (rows.length > 0) {
         const lastRow = rows[rows.length - 1];
-        // Select ALL columns with size 2 in this row
         const cols = lastRow.querySelectorAll('.col-2');
         
-        // The button is in the SECOND '.col-2' (index 1). The first (index 0) is the quantity.
         if (cols.length > 1) {
             cols[1].innerHTML = `<button type="button" class="btn btn-outline-danger w-100" onclick="this.closest('.item-row').remove()">×</button>`;
         }
     }
 
-    // Add new row with "+"
     const div = document.createElement('div');
     div.className = 'row g-2 mb-2 item-row';
     div.innerHTML = `
