@@ -678,15 +678,38 @@ function renderRequestsTable() {
         
         tbody.innerHTML = '';
         requests.forEach(req => {
+            
+            const status = req.status || 'Pending'; 
+            let badgeClass = 'bg-warning text-dark'; 
+            if (status === 'Approved') badgeClass = 'bg-success'; 
+            else if (status === 'Cancelled') badgeClass = 'bg-danger'; 
+
+            let statusDropdown = '';
+            if (currentUser && currentUser.role === 'admin') {
+                statusDropdown = `
+                    <div class="dropdown d-inline-block me-1">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Set Status
+                        </button>
+                        <ul class="dropdown-menu shadow-sm">
+                            <li><a class="dropdown-item" href="#" onclick="changeReqStatus('${req.id}', 'Pending')">🟡 Pending</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeReqStatus('${req.id}', 'Approved')">🟢 Approved</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeReqStatus('${req.id}', 'Cancelled')">🔴 Cancelled</a></li>
+                        </ul>
+                    </div>
+                `;
+            }
+
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td class="ps-4 align-middle fw-bold">REQ-${req.id}</td>
-                <td class="align-middle">${req.type}</td>
+                <td class="align-middle">${req.type}<br><small class="text-muted">${req.ownerEmail}</small></td>
                 <td class="align-middle">${req.items.length} items</td>
-                <td class="align-middle"><span class="badge bg-warning text-dark">Pending</span></td>
+                <td class="align-middle"><span class="badge ${badgeClass}">${status}</span></td>
                 <td class="align-middle text-center">
+                    ${statusDropdown}
                     <button class="btn btn-sm btn-outline-primary me-1" onclick="editRequest('${req.id}')">Edit</button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteRequest(${req.id})">Delete</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteRequest('${req.id}')">Delete</button>
                 </td>
             `;
             tbody.appendChild(row);
@@ -828,4 +851,18 @@ window.deleteRequest = function(id) {
     requests = requests.filter(r => r.id != id);
     localStorage.setItem('requests', JSON.stringify(requests));
     renderRequestsTable();
+};
+
+window.changeReqStatus = function(id, newStatus) {
+    let requests = JSON.parse(localStorage.getItem('requests')) || [];
+    
+    const index = requests.findIndex(r => r.id == id);
+    
+    if (index !== -1) {
+        requests[index].status = newStatus;
+        
+        localStorage.setItem('requests', JSON.stringify(requests));
+        
+        renderRequestsTable(); 
+    }
 };
