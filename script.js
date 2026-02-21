@@ -10,7 +10,7 @@
         firstName: 'Admin',
         lastName: 'User',
         email: 'admin@example.com',
-        password: 'admin123', 
+        password: 'Password123!', 
         role: 'admin',       
         verified: true
     };
