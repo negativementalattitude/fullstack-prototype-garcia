@@ -24,8 +24,6 @@
         { name: 'Business', desc: 'Business & Accountancy' }
     ];
     localStorage.setItem('departments', JSON.stringify(defaultDepts));
-    
-    console.log("System Reset: All data erased. Admin & Default Departments restored.");
 })();
 
 let currentUser = null; 
@@ -91,26 +89,21 @@ function handleRouting() {
                 }
             }
             break;
-
         case '#/register':
             pageId = 'register-page';
             document.getElementById('register-form').reset();
             break;
-
         case '#/login':
             pageId = 'login-page';
             checkLoginNotification(); 
             document.getElementById('login-form').reset(); 
             break;
-
         case '#/verify-email':
             pageId = 'verify-page';
             setupVerifyPage(); 
             break;
-        
         case '#/admin-dashboard':
             if (!currentUser || currentUser.role !== 'admin') {
-                alert("Admin access only.");
                 if (currentUser) window.location.hash = '#/dashboard';
                 else window.location.hash = '#/login';
                 return;
@@ -119,10 +112,8 @@ function handleRouting() {
             document.getElementById('admin-name-display').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
             document.getElementById('admin-email-display').textContent = currentUser.email;
             break;
-
         case '#/admin-employees':
             if (!currentUser || currentUser.role !== 'admin') {
-                alert("Admin access only.");
                 if (currentUser) window.location.hash = '#/dashboard';
                 else window.location.hash = '#/login';
                 return;
@@ -130,10 +121,8 @@ function handleRouting() {
             pageId = 'admin-employees-page';
             renderEmployeesTable(); 
             break;
-
         case '#/admin-accounts':
             if (!currentUser || currentUser.role !== 'admin') {
-                alert("Admin access only.");
                 if (currentUser) window.location.hash = '#/dashboard';
                 else window.location.hash = '#/login';
                 return;
@@ -141,7 +130,6 @@ function handleRouting() {
             pageId = 'admin-accounts-page';
             renderAccountsTable(); 
             break;
-
         case '#/dashboard':
             if (!currentUser) {
                 window.location.hash = '#/login'; 
@@ -151,10 +139,8 @@ function handleRouting() {
             document.getElementById('user-name-display').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
             document.getElementById('user-email-display').textContent = currentUser.email;
             break;
-
         case '#/admin-departments':
             if (!currentUser || currentUser.role !== 'admin') {
-                alert("Admin access only.");
                 if (currentUser) window.location.hash = '#/dashboard';
                 else window.location.hash = '#/login';
                 return;
@@ -162,7 +148,6 @@ function handleRouting() {
             pageId = 'admin-departments-page';
             renderDepartmentsTable(); 
             break;
-        
         case '#/my-requests':
             if (!currentUser) {
                 window.location.hash = '#/login';
@@ -171,7 +156,6 @@ function handleRouting() {
             pageId = 'admin-requests-page';
             renderRequestsTable();
             break;
-
         default:
             pageId = 'home-page';
     }
@@ -231,9 +215,9 @@ if (registerForm) {
         const email = document.getElementById('reg-email').value;
         const password = document.getElementById('reg-password').value;
 
-        if (password.length < 6) { alert("Password must be at least 6 characters."); return; }
+        if (password.length < 6) return;
         const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
-        if (existingUsers.find(u => u.email === email)) { alert("Email already registered!"); return; }
+        if (existingUsers.find(u => u.email === email)) return;
 
         const newUser = { firstName, lastName, email, password, role: 'user', verified: false };
         existingUsers.push(newUser);
@@ -299,7 +283,6 @@ function renderAccountsTable() {
 
 function toggleAccountForm() {
     const formCard = document.getElementById('account-form-card');
-    
     if (formCard.classList.contains('d-none')) {
         resetAccountFormUI();
     }
@@ -326,9 +309,7 @@ if (adminAddForm) {
         const role = document.getElementById('acc-role').value;
         let verified = document.getElementById('acc-verified').checked; 
 
-        if (!email.includes('@')) {
-            verified = false;
-        }
+        if (!email.includes('@')) verified = false;
 
         let users = JSON.parse(localStorage.getItem('users')) || [];
 
@@ -340,16 +321,11 @@ if (adminAddForm) {
                 users[index].password = password;
                 users[index].role = role;
                 users[index].verified = verified;
-                alert("Account updated successfully!");
             }
         } else {
-            if (users.find(u => u.email === email)) {
-                alert("User with this email already exists!");
-                return;
-            }
+            if (users.find(u => u.email === email)) return;
             const newUser = { firstName, lastName, email, password, role, verified };
             users.push(newUser);
-            alert("Account created successfully!");
         }
 
         localStorage.setItem('users', JSON.stringify(users));
@@ -361,7 +337,6 @@ if (adminAddForm) {
 window.editAccount = function(email) {
     const users = JSON.parse(localStorage.getItem('users')) || [];
     const user = users.find(u => u.email === email);
-    
     if (!user) return;
 
     const formCard = document.getElementById('account-form-card');
@@ -384,30 +359,20 @@ window.editAccount = function(email) {
 
 window.resetPassword = function(email) {
     const newPw = prompt(`Enter new password for ${email}:`);
-    
-    if (newPw) {
-        if (newPw.length < 6) {
-            alert("Password must be at least 6 characters.");
-            return;
-        }
-
+    if (newPw && newPw.length >= 6) {
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const index = users.findIndex(u => u.email === email);
-        
         if (index !== -1) {
             users[index].password = newPw;
             localStorage.setItem('users', JSON.stringify(users));
-            alert("Password updated successfully.");
         }
     }
 };
 
 window.deleteAccount = function(emailToDelete) {
-    if(!confirm(`Are you sure you want to delete ${emailToDelete}?`)) return;
-
+    if(!confirm(`Delete ${emailToDelete}?`)) return;
     let users = JSON.parse(localStorage.getItem('users')) || [];
     users = users.filter(u => u.email !== emailToDelete);
-    
     localStorage.setItem('users', JSON.stringify(users));
     renderAccountsTable(); 
 };
@@ -415,9 +380,7 @@ window.deleteAccount = function(emailToDelete) {
 function populateDepartmentDropdown() {
     const selectEl = document.getElementById('emp-dept');
     if (!selectEl) return;
-    
     selectEl.innerHTML = ''; 
-
     let departments = JSON.parse(localStorage.getItem('departments')) || [];
 
     if (departments.length === 0) {
@@ -439,7 +402,6 @@ function populateDepartmentDropdown() {
 
 function renderEmployeesTable() {
     populateDepartmentDropdown(); 
-
     const tbody = document.getElementById('employees-table-body');
     const msg = document.getElementById('no-employees-msg');
     const employees = JSON.parse(localStorage.getItem('employees')) || [];
@@ -506,16 +468,11 @@ if (adminEmpForm) {
                 employees[index].position = position;
                 employees[index].department = department;
                 employees[index].hireDate = hireDate;
-                alert("Employee updated successfully!");
             }
         } else {
-            if (employees.find(e => e.id === id)) { 
-                alert("Employee ID already exists!"); 
-                return; 
-            }
+            if (employees.find(e => e.id === id)) return;
             const newEmp = { id, email, position, department, hireDate };
             employees.push(newEmp);
-            alert("Employee added successfully!");
         }
 
         localStorage.setItem('employees', JSON.stringify(employees));
@@ -543,7 +500,6 @@ window.editEmployee = function(id) {
     document.getElementById('emp-id').disabled = true; 
     document.querySelector('#employee-form-card .card-header').textContent = "Edit Employee";
     document.querySelector('#admin-add-employee-form button[type="submit"]').textContent = "Update";
-    
     formCard.scrollIntoView({ behavior: 'smooth' });
 };
 
@@ -558,7 +514,6 @@ window.deleteEmployee = function(idToDelete) {
 function renderDepartmentsTable() {
     const tbody = document.getElementById('departments-table-body');
     const msg = document.getElementById('no-departments-msg');
-    
     let departments = JSON.parse(localStorage.getItem('departments')) || [];
 
     tbody.innerHTML = '';
@@ -567,7 +522,6 @@ function renderDepartmentsTable() {
         msg.classList.remove('d-none');
     } else {
         msg.classList.add('d-none');
-
         departments.forEach(dept => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -585,10 +539,7 @@ function renderDepartmentsTable() {
 
 function toggleDepartmentForm() {
     const formCard = document.getElementById('department-form-card');
-    
-    if (formCard.classList.contains('d-none')) {
-        resetDepartmentFormUI();
-    }
+    if (formCard.classList.contains('d-none')) resetDepartmentFormUI();
     formCard.classList.toggle('d-none');
 }
 
@@ -606,22 +557,14 @@ if (adminDeptForm) {
         e.preventDefault();
         const name = document.getElementById('dept-name').value;
         const desc = document.getElementById('dept-desc').value;
-
         let departments = JSON.parse(localStorage.getItem('departments')) || [];
 
         if (editingDeptName) {
             const index = departments.findIndex(d => d.name === editingDeptName);
-            if (index !== -1) {
-                departments[index].desc = desc; 
-                alert("Department updated successfully!");
-            }
+            if (index !== -1) departments[index].desc = desc; 
         } else {
-            if (departments.find(d => d.name === name)) { 
-                alert("Department already exists!"); 
-                return; 
-            }
+            if (departments.find(d => d.name === name)) return;
             departments.push({ name, desc });
-            alert("Department added successfully!");
         }
 
         localStorage.setItem('departments', JSON.stringify(departments));
@@ -638,15 +581,12 @@ window.editDepartment = function(name) {
 
     const formCard = document.getElementById('department-form-card');
     formCard.classList.remove('d-none');
-
     document.getElementById('dept-name').value = dept.name;
     document.getElementById('dept-desc').value = dept.desc;
-
     editingDeptName = dept.name;
     document.getElementById('dept-name').disabled = true; 
     document.querySelector('#department-form-card .card-header').textContent = "Edit Department";
     document.querySelector('#admin-add-department-form button[type="submit"]').textContent = "Update";
-    
     formCard.scrollIntoView({ behavior: 'smooth' });
 };
 
@@ -662,7 +602,6 @@ function renderRequestsTable() {
     const emptyState = document.getElementById('requests-empty-state');
     const tableContainer = document.getElementById('requests-table-container');
     const tbody = document.getElementById('requests-table-body');
-    
     let requests = JSON.parse(localStorage.getItem('requests')) || [];
 
     if (currentUser && currentUser.role !== 'admin') {
@@ -675,10 +614,8 @@ function renderRequestsTable() {
     } else {
         emptyState.classList.add('d-none');
         tableContainer.classList.remove('d-none');
-        
         tbody.innerHTML = '';
         requests.forEach(req => {
-            
             const status = req.status || 'Pending'; 
             let badgeClass = 'bg-warning text-dark'; 
             if (status === 'Approved') badgeClass = 'bg-success'; 
@@ -722,7 +659,6 @@ window.openNewRequestModal = function() {
     document.getElementById('request-form').reset();
     document.querySelector('#requestModal .modal-title').textContent = "New Request";
     document.querySelector('#request-form button[type="submit"]').textContent = "Submit Request";
-    
     document.getElementById('req-items-container').innerHTML = `
         <div class="row g-2 mb-2 item-row">
             <div class="col-8"><input type="text" class="form-control item-name" placeholder="Item name" required></div>
@@ -730,9 +666,7 @@ window.openNewRequestModal = function() {
             <div class="col-2"><button type="button" class="btn btn-outline-secondary w-100" onclick="addItemRow()">+</button></div>
         </div>
     `;
-
-    const modal = new bootstrap.Modal(document.getElementById('requestModal'));
-    modal.show();
+    new bootstrap.Modal(document.getElementById('requestModal')).show();
 };
 
 window.editRequest = function(id) {
@@ -743,7 +677,6 @@ window.editRequest = function(id) {
     editingRequestId = req.id;
     document.querySelector('#requestModal .modal-title').textContent = "Edit Request";
     document.querySelector('#request-form button[type="submit"]').textContent = "Update Request";
-
     document.getElementById('req-type').value = req.type;
 
     const container = document.getElementById('req-items-container');
@@ -752,7 +685,6 @@ window.editRequest = function(id) {
     req.items.forEach((item, index) => {
         const div = document.createElement('div');
         div.className = 'row g-2 mb-2 item-row';
-        
         const isLast = index === req.items.length - 1;
         const btnHtml = isLast 
             ? `<button type="button" class="btn btn-outline-secondary w-100" onclick="addItemRow()">+</button>`
@@ -766,8 +698,7 @@ window.editRequest = function(id) {
         container.appendChild(div);
     });
 
-    const modal = new bootstrap.Modal(document.getElementById('requestModal'));
-    modal.show();
+    new bootstrap.Modal(document.getElementById('requestModal')).show();
 };
 
 window.addItemRow = function() {
@@ -778,6 +709,7 @@ window.addItemRow = function() {
         const lastRow = rows[rows.length - 1];
         const cols = lastRow.querySelectorAll('.col-2');
         
+        // This is the important fix! It targets the SECOND col-2 (index 1)
         if (cols.length > 1) {
             cols[1].innerHTML = `<button type="button" class="btn btn-outline-danger w-100" onclick="this.closest('.item-row').remove()">×</button>`;
         }
@@ -803,7 +735,6 @@ const requestForm = document.getElementById('request-form');
 if (requestForm) {
     requestForm.addEventListener('submit', function(e) {
         e.preventDefault();
-
         const itemRows = document.querySelectorAll('.item-row');
         const items = [];
         itemRows.forEach(row => {
@@ -820,7 +751,6 @@ if (requestForm) {
             if (index !== -1) {
                 requests[index].type = type;
                 requests[index].items = items;
-                alert("Request updated successfully!");
             }
         } else {
             const newReq = {
@@ -832,15 +762,12 @@ if (requestForm) {
                 ownerEmail: currentUser.email 
             };
             requests.push(newReq);
-            alert("Request submitted successfully!");
         }
 
         localStorage.setItem('requests', JSON.stringify(requests));
-        
         const modalEl = document.getElementById('requestModal');
         const modalInstance = bootstrap.Modal.getInstance(modalEl); 
         if(modalInstance) modalInstance.hide();
-
         renderRequestsTable();
     });
 }
@@ -855,14 +782,10 @@ window.deleteRequest = function(id) {
 
 window.changeReqStatus = function(id, newStatus) {
     let requests = JSON.parse(localStorage.getItem('requests')) || [];
-    
     const index = requests.findIndex(r => r.id == id);
-    
     if (index !== -1) {
         requests[index].status = newStatus;
-        
         localStorage.setItem('requests', JSON.stringify(requests));
-        
         renderRequestsTable(); 
     }
 };
