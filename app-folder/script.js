@@ -5,16 +5,14 @@
     localStorage.removeItem('departments');
     localStorage.removeItem('unverified_email');
     
-    const users = [];
-    const adminUser = {
+    const users = [{
         firstName: 'Admin',
         lastName: 'User',
         email: 'admin@example.com',
-        password: 'Password123!', 
+        password: 'admin123', 
         role: 'admin',       
         verified: true
-    };
-    users.push(adminUser);
+    }];
     localStorage.setItem('users', JSON.stringify(users));
 
     const defaultDepts = [
@@ -24,6 +22,8 @@
         { name: 'Business', desc: 'Business & Accountancy' }
     ];
     localStorage.setItem('departments', JSON.stringify(defaultDepts));
+    
+    console.log("System Reset: All data wiped. Admin account restored.");
 })();
 
 let currentUser = null; 
@@ -80,14 +80,6 @@ function handleRouting() {
     switch(hash) {
         case '#/home':
             pageId = 'home-page';
-            const warningBox = document.getElementById('storage-warning');
-            if (warningBox) {
-                if (currentUser && currentUser.role === 'admin') {
-                    warningBox.classList.add('d-none'); 
-                } else {
-                    warningBox.classList.remove('d-none'); 
-                }
-            }
             break;
         case '#/register':
             pageId = 'register-page';
@@ -104,6 +96,7 @@ function handleRouting() {
             break;
         case '#/admin-dashboard':
             if (!currentUser || currentUser.role !== 'admin') {
+                alert("Admin access only."); // FIX: Alert added back
                 if (currentUser) window.location.hash = '#/dashboard';
                 else window.location.hash = '#/login';
                 return;
@@ -114,6 +107,7 @@ function handleRouting() {
             break;
         case '#/admin-employees':
             if (!currentUser || currentUser.role !== 'admin') {
+                alert("Admin access only."); // FIX: Alert added back
                 if (currentUser) window.location.hash = '#/dashboard';
                 else window.location.hash = '#/login';
                 return;
@@ -123,6 +117,7 @@ function handleRouting() {
             break;
         case '#/admin-accounts':
             if (!currentUser || currentUser.role !== 'admin') {
+                alert("Admin access only."); // FIX: Alert added back
                 if (currentUser) window.location.hash = '#/dashboard';
                 else window.location.hash = '#/login';
                 return;
@@ -141,6 +136,7 @@ function handleRouting() {
             break;
         case '#/admin-departments':
             if (!currentUser || currentUser.role !== 'admin') {
+                alert("Admin access only."); // FIX: Alert added back
                 if (currentUser) window.location.hash = '#/dashboard';
                 else window.location.hash = '#/login';
                 return;
@@ -215,13 +211,25 @@ if (registerForm) {
         const email = document.getElementById('reg-email').value;
         const password = document.getElementById('reg-password').value;
 
-        if (password.length < 6) return;
-        const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
-        if (existingUsers.find(u => u.email === email)) return;
+        
+        if (password.length < 6) { 
+            alert("Password must be at least 6 characters."); 
+            return; 
+        }
 
+        
+        const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+        if (existingUsers.find(u => u.email === email)) { 
+            alert("This email is already registered! Try a different one or log in."); 
+            return; 
+        }
+
+        
         const newUser = { firstName, lastName, email, password, role: 'user', verified: false };
         existingUsers.push(newUser);
         localStorage.setItem('users', JSON.stringify(existingUsers));
+        
+        
         localStorage.setItem('unverified_email', email);
         navigateTo('#/verify-email');
         registerForm.reset();
@@ -709,7 +717,6 @@ window.addItemRow = function() {
         const lastRow = rows[rows.length - 1];
         const cols = lastRow.querySelectorAll('.col-2');
         
-        // This is the important fix! It targets the SECOND col-2 (index 1)
         if (cols.length > 1) {
             cols[1].innerHTML = `<button type="button" class="btn btn-outline-danger w-100" onclick="this.closest('.item-row').remove()">×</button>`;
         }
